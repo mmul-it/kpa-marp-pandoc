@@ -1,0 +1,20 @@
+name: Create kpa-marp-pandoc container image
+
+env:
+  REGISTRY_NAME: quay.io
+  CONTAINER_NAME: mmul/kpa-marp-pandoc
+  CONTAINER_VERSION: latest
+
+on: [push]
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the container image
+      run: docker build . --file Dockerfile --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
+    - name: Login into the container registry
+      run: docker login -u="${{ vars.QUAY_ROBOT_NAME }}" -p="${{ secrets.QUAY_ROBOT_TOKEN }}" ${REGISTRY_NAME}
+    - name: Push the image into the container registry
+      run: docker push ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}

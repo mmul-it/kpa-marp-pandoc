@@ -1,5 +1,6 @@
 # ![KPA - The Knowledge Pods Approach](./images/kpa-github-header.png#gh-light-mode-only) ![KPA - The Knowledge Pods Approach](./images/kpa-github-header-dark.png#gh-dark-mode-only)
 
+[![GitHub Actions CI](https://github.com/mmul-it/kpa-marp-pandoc/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/mmul-it/kpa-marp-pandoc/actions/workflows/main.yml)
 [![Docker Repository on Quay](https://quay.io/repository/mmul/kpa-marp-pandoc/status "Docker Repository on Quay")](https://quay.io/repository/mmul/kpa-marp-pandoc)
 
 This repository defines the base container containing all the needed tools by
