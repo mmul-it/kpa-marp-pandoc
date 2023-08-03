@@ -1,8 +1,8 @@
 name: Create kpa-marp-pandoc container image
 
 env:
-  REGISTRY_NAME: quay.io
-  CONTAINER_NAME: mmul/kpa-marp-pandoc
+  REGISTRY_NAME: ghcr.io
+  CONTAINER_NAME: mmul-it/kpa-marp-pandoc
   CONTAINER_VERSION: latest
 
 on: [push]
@@ -15,6 +15,6 @@ jobs:
     - name: Build the container image
       run: docker build . --file Dockerfile --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
     - name: Login into the container registry
-      run: docker login -u="${{ vars.QUAY_ROBOT_NAME }}" -p="${{ secrets.QUAY_ROBOT_TOKEN }}" ${REGISTRY_NAME}
+      run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ vars.GHCR_USER }} --password-stdin
     - name: Push the image into the container registry
       run: docker push ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
