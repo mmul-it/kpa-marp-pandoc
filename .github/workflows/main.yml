@@ -3,7 +3,6 @@ name: Create kpa-marp-pandoc container image
 env:
   REGISTRY_NAME: ghcr.io
   CONTAINER_NAME: mmul-it/kpa-marp-pandoc
-  CONTAINER_VERSION: latest
 
 on: [push]
 
@@ -12,6 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Env
+      run: env
+    - name: Check whether github.ref_type is branch or tag
+      run: if [ "${{ github.ref_type }}" == 'branch' ];
+            then
+             echo "CONTAINER_VERSION=$(echo ${{ github.sha }} | cut -c 1-12)" >> ${GITHUB_ENV};
+            else
+             echo "CONTAINER_VERSION=$(echo ${{ github.ref_name }})" >> ${GITHUB_ENV};
+           fi
     - name: Build the container image
       run: docker build . --file Dockerfile --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
     - name: Login into the container registry
