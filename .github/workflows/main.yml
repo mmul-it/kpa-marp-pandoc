@@ -4,14 +4,26 @@ env:
   REGISTRY_NAME: ghcr.io
   CONTAINER_NAME: mmul-it/kpa-marp-pandoc
   CONTAINER_VERSION: latest
+  PACKER_VERSION: 1.9.2
 
 on: [push]
 
 jobs:
+  packer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get packer
+        run: |
+          packer --version || curl -fSL https://releases.hashicorp.com/packer/${{ env.PACKER_VERSION }}/packer_${{ env.PACKER_VERSION }}_linux_amd64.zip \
+          | gunzip -> /usr/bin/packer
+          chmod u+x /usr/bin/packer
+          /usr/bin/packer -version
   build_and_push:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build the container image
       run: docker build . --file Dockerfile --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
     - name: Login into the container registry
