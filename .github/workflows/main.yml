@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Env
-      run: env
     - name: Check whether github.ref_type is branch or tag
       run: if [ "${{ github.ref_type }}" == 'branch' ];
             then
@@ -21,8 +19,11 @@ jobs:
              echo "CONTAINER_VERSION=$(echo ${{ github.ref_name }})" >> ${GITHUB_ENV};
            fi
     - name: Build the container image
-      run: docker build . --file Dockerfile --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
+      run: docker build .
+             --file Dockerfile
+             --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
+             --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:latest
     - name: Login into the container registry
       run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ vars.GHCR_USER }} --password-stdin
     - name: Push the image into the container registry
-      run: docker push ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
+      run: docker push --all-tags ${REGISTRY_NAME}/${CONTAINER_NAME}
