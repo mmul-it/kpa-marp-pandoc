@@ -1,0 +1,1 @@
+source_image="docker.io/ubuntu:22.04"
