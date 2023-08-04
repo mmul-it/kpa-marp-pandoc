@@ -11,7 +11,7 @@ jobs:
   build_and_push:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build the container image
       run: docker build . --file Dockerfile --tag ${REGISTRY_NAME}/${CONTAINER_NAME}:${CONTAINER_VERSION}
     - name: Login into the container registry
