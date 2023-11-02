@@ -12,38 +12,34 @@
 #
 # [1] https://github.com/mmul-it/kpa
 
-# Start from ansible-core
-FROM docker.io/ubuntu:22.04
+# We rely on Debian Stable
+FROM docker.io/debian:stable-slim
 
-# Update repo contents
-RUN apt update
+# Set specific apt bits
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
 
-# Install requiremets
-RUN apt -y install python3-pip curl git
-
-# Upgrade pip & install ansible & ansible-lint
-RUN pip3 install --upgrade pip && \
-    pip3 install ansible ansible-lint
-
-# Install yamllint (Yaml linter)
-RUN pip3 install yamllint
+# Install required system packages
+RUN apt update &&\
+    apt -y install curl git ansible ansible-lint yamllint rubygems ca-certificates curl gnupg && \
+    apt clean
 
 # Install mdl (Mardown linter)
-RUN apt -y install rubygems
 RUN gem install mdl
 
 # Install Marp with nodejs and chrome 
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    curl -s https://dl.google.com/linux/linux_signing_key.pub -o - | apt-key add - && \
-    gpg --refresh-keys && \
-    apt update
-RUN apt -y install nodejs google-chrome-stable
-RUN npm install -g @marp-team/marp-cli
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | \
+    gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > \
+    /etc/apt/sources.list.d/nodesource.list && \
+    apt update && \
+    apt install -y nodejs chromium && \
+    npm install -g @marp-team/marp-cli && \
+    apt clean
 
 # Install pandoc with texlive
-ARG DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
 RUN apt -y install pandoc texlive texlive-base texlive-binaries \
       texlive-fonts-recommended texlive-latex-base texlive-latex-extra \
-      texlive-latex-recommended texlive-pictures texlive-plain-generic texlive-xetex
+      texlive-latex-recommended texlive-pictures texlive-plain-generic texlive-xetex && \
+    apt clean
